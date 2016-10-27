@@ -12,6 +12,7 @@
     tools:context="com.kevalpatel.sample.MainActivity">
 
     <VideoView
+        android:text="Hello world!!!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/video_view"/>

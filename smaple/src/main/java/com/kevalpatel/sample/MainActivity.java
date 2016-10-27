@@ -44,13 +44,8 @@ public class MainActivity extends AnalyserActivity implements FaceTrackerListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        startFaceAnalysis();
     }
 
     @Override
@@ -78,6 +73,12 @@ public class MainActivity extends AnalyserActivity implements FaceTrackerListene
         Snackbar.make(findViewById(R.id.activity_main), "Error occurred.",
                 Snackbar.LENGTH_INDEFINITE)
                 .show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        startFaceAnalysis();
     }
 
     /**

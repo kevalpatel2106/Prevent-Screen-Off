@@ -35,6 +35,8 @@ class FaceAnalyser {
     private CameraSourcePreview mPreview;
     private PowerManager.WakeLock mWakeLock;
 
+    private boolean isTrackingRunning = false;
+
     private FaceTrackerListener mScreenListener;
     private Activity mActivity;
 
@@ -66,10 +68,9 @@ class FaceAnalyser {
                 Settings.System.SCREEN_OFF_TIMEOUT, 0);
     }
 
-    void onPauseCalled() {
-    }
-
     void stopFaceTracker() {
+        isTrackingRunning = false;
+
         if (mDetector != null) mDetector.release();
         if (mPreview != null)  mPreview.release();
     }
@@ -100,7 +101,7 @@ class FaceAnalyser {
     }
 
 
-    void startCameraSource() {
+    void startFaceTracker() {
         creteCameraTracker();
 
         // check that the device has play services available.
@@ -120,6 +121,12 @@ class FaceAnalyser {
                 mCameraSource = null;
             }
         }
+
+        isTrackingRunning = true;
+    }
+
+    public boolean isTrackingRunning() {
+        return isTrackingRunning;
     }
 
     /**

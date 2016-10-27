@@ -1,7 +1,6 @@
 package com.kevalpatel.preventscreenoff;
 
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -17,18 +16,55 @@ import android.widget.RelativeLayout;
 public abstract class AnalyserActivity extends AppCompatActivity implements FaceTrackerListener {
     private FaceAnalyser mFaceAnalyser;
 
+    private boolean isForcedStop = false;
+
     @Override
     protected void onStart() {
         super.onStart();
+        mFaceAnalyser = new FaceAnalyser(this, addPreView());
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFaceAnalyser.onResumeCalled();
+
+        if (!isForcedStop && !mFaceAnalyser.isTrackingRunning()) startFaceAnalysis();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.stopFaceTracker();
+    }
+
+
+    public final void startFaceAnalysis() {
+        if (mFaceAnalyser == null)
+            throw new RuntimeException("Cannot start face analysis in onCreate(). Start it in onStart().");
+
+        mFaceAnalyser.startFaceTracker();
+    }
+
+
+    public final void stopFaceAnalyser() {
+        isForcedStop = true;
+        mFaceAnalyser.stopFaceTracker();
+    }
+
+    /**
+     * Add camera preview to the root of the activity layout.
+     *
+     * @return {@link CameraSourcePreview}
+     */
+    private CameraSourcePreview addPreView() {
         //create fake camera view
         CameraSourcePreview cameraSourcePreview = new CameraSourcePreview(this);
-        cameraSourcePreview.setLayoutParams(new ViewGroup.LayoutParams(1, 1));
-        cameraSourcePreview.setAlpha(0f);
+        cameraSourcePreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         View view = ((ViewGroup) getWindow().getDecorView().getRootView()).getChildAt(0);
 
-        Log.d("id", view.getId() + "");
         if (view instanceof LinearLayout) {
             LinearLayout linearLayout = (LinearLayout) view;
 
@@ -45,41 +81,11 @@ public abstract class AnalyserActivity extends AppCompatActivity implements Face
             FrameLayout frameLayout = (FrameLayout) view;
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(1, 1);
-//            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-//            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             frameLayout.addView(cameraSourcePreview, params);
         } else {
             throw new RuntimeException("Root view of the activity/fragment cannot be frame layout");
         }
 
-        mFaceAnalyser = new FaceAnalyser(this, cameraSourcePreview);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mFaceAnalyser.onResumeCalled();
-
-//        startFaceAnalysis();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mFaceAnalyser.onPauseCalled();
-        stopFaceAnalyser();
-    }
-
-
-    public final void startFaceAnalysis() {
-        if (mFaceAnalyser == null)
-            throw new RuntimeException("Cannot start face analysis in onCreate(). Start it in onStart().");
-
-        mFaceAnalyser.startCameraSource();
-    }
-
-    public final void stopFaceAnalyser() {
-        mFaceAnalyser.stopFaceTracker();
+        return cameraSourcePreview;
     }
 }
