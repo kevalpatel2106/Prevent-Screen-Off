@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">EyeDetection</string>
+    <string name="no_camera_permission">No Camera Permission.</string>
+    <string name="permission_camera_rationale">Provide camera permission.</string>
+</resources>
