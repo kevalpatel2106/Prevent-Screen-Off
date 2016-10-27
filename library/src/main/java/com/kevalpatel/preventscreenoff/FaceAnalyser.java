@@ -72,7 +72,7 @@ class FaceAnalyser {
         isTrackingRunning = false;
 
         if (mDetector != null) mDetector.release();
-        if (mPreview != null)  mPreview.release();
+        if (mPreview != null) mPreview.release();
     }
 
 
@@ -125,7 +125,7 @@ class FaceAnalyser {
         isTrackingRunning = true;
     }
 
-    public boolean isTrackingRunning() {
+    boolean isTrackingRunning() {
         return isTrackingRunning;
     }
 
@@ -145,6 +145,7 @@ class FaceAnalyser {
      * associated face overlay.
      */
     private class GraphicFaceTracker extends Tracker<Face> {
+        int isEyesClosedCount = 0;
 
         private GraphicFaceTracker() {
         }
@@ -165,11 +166,17 @@ class FaceAnalyser {
             Log.d(TAG, "onUpdate" + face.getIsLeftEyeOpenProbability());
 
             if (face.getIsLeftEyeOpenProbability() > 0.10 && face.getIsRightEyeOpenProbability() > 0.10) {
+                isEyesClosedCount = 0;
+
                 if (!mWakeLock.isHeld()) mWakeLock.acquire();
                 mScreenListener.onUserAttentionAvailable();
             } else {
-                if (mWakeLock.isHeld()) mWakeLock.release();
-                mScreenListener.onUserAttentionGone();
+                isEyesClosedCount++;
+
+                if (isEyesClosedCount > 2) {
+                    if (mWakeLock.isHeld()) mWakeLock.release();
+                    mScreenListener.onUserAttentionGone();
+                }
             }
         }
 
