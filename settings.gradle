@@ -1,1 +1,1 @@
-include ':smaple', ':library'
+include ':smaple', ':prevent-screen-off'

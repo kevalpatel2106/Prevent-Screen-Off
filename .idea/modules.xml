@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Prevent-Screen-Off.iml" filepath="$PROJECT_DIR$/Prevent-Screen-Off.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/prevent-screen-off/prevent-screen-off.iml" filepath="$PROJECT_DIR$/prevent-screen-off/prevent-screen-off.iml" />
       <module fileurl="file://$PROJECT_DIR$/smaple/smaple.iml" filepath="$PROJECT_DIR$/smaple/smaple.iml" />
     </modules>
   </component>
