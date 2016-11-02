@@ -28,8 +28,8 @@ import java.io.IOException;
 
 class FaceAnalyser {
     private static final int RC_HANDLE_GMS = 4525;
+    private static final String WAKE_LOCK_TAG = "FaceTacker Wakelock";
 
-    private static final String TAG = "face";
     private FaceDetector mDetector;
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
@@ -46,6 +46,7 @@ class FaceAnalyser {
      * @param activity activity.
      * @param preview  {@link CameraSourcePreview} to diplay the fake camera preview.
      */
+    @SuppressWarnings("deprecation")
     FaceAnalyser(AnalyserActivity activity, CameraSourcePreview preview) {
         if (activity != null) {
             mActivity = activity;
@@ -61,7 +62,7 @@ class FaceAnalyser {
         }
 
         final PowerManager pm = (PowerManager) mActivity.getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "FaceTacker Wakelock");
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, WAKE_LOCK_TAG);
     }
 
     /**
@@ -72,6 +73,8 @@ class FaceAnalyser {
 
         if (mDetector != null) mDetector.release();
         if (mPreview != null) mPreview.release();
+
+        mScreenListener.onScreenMonitoringStop();
     }
 
     /**
@@ -132,7 +135,7 @@ class FaceAnalyser {
             try {
                 mPreview.start(mCameraSource);
             } catch (IOException e) {
-                Log.e(TAG, "Unable to start camera source.", e);
+                Log.e(getClass().getSimpleName(), "Unable to start camera source.", e);
                 mCameraSource.release();
                 mCameraSource = null;
 
@@ -141,6 +144,7 @@ class FaceAnalyser {
         }
 
         isTrackingRunning = true;
+        mScreenListener.onScreenMonitoringStart();
     }
 
     /**
@@ -178,7 +182,7 @@ class FaceAnalyser {
          */
         @Override
         public void onNewItem(int faceId, Face item) {
-            Log.d(TAG, "onNewItem" + faceId);
+            Log.d(getClass().getSimpleName(), "onNewItem" + faceId);
         }
 
         /**
@@ -186,19 +190,17 @@ class FaceAnalyser {
          */
         @Override
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
-            Log.d(TAG, "onUpdate" + face.getIsLeftEyeOpenProbability());
+            Log.d(getClass().getSimpleName(), "onUpdate" + face.getIsLeftEyeOpenProbability());
 
             if (face.getIsLeftEyeOpenProbability() > 0.10 && face.getIsRightEyeOpenProbability() > 0.10) {
                 isEyesClosedCount = 0;
 
                 if (!mWakeLock.isHeld()) mWakeLock.acquire();
-                mScreenListener.onUserAttentionAvailable();
             } else {
                 isEyesClosedCount++;
 
                 if (isEyesClosedCount > 2) {
                     if (mWakeLock.isHeld()) mWakeLock.release();
-                    mScreenListener.onUserAttentionGone();
                 }
             }
         }
@@ -210,7 +212,6 @@ class FaceAnalyser {
          */
         @Override
         public void onMissing(FaceDetector.Detections<Face> detectionResults) {
-            Log.d(TAG, "onMissing");
         }
 
         /**
@@ -220,7 +221,7 @@ class FaceAnalyser {
         @Override
         public void onDone() {
             if (mWakeLock.isHeld()) mWakeLock.release();
-            mScreenListener.onUserAttentionGone();
+            mScreenListener.onScreenMonitoringStart();
         }
     }
 
@@ -229,6 +230,7 @@ class FaceAnalyser {
      *
      * @return true if the device has front camera.
      */
+    @SuppressWarnings("deprecation")
     private boolean isFrontCameraAvailable() {
         int numCameras = Camera.getNumberOfCameras();
         return numCameras > 0 && mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);

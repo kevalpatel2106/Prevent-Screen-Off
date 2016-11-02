@@ -8,9 +8,9 @@ package com.kevalpatel.preventscreenoff;
 
 public interface ScreenListner {
 
-    void onUserAttentionGone();
+    void onScreenMonitoringStart();
 
-    void onUserAttentionAvailable();
+    void onScreenMonitoringStop();
 
     void onErrorOccurred(int errorCode);
 }

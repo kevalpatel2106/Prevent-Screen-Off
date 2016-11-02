@@ -2,12 +2,14 @@ package com.kevalpatel.sample;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v4.app.NotificationCompat;
 import android.view.View;
 
 import com.kevalpatel.preventscreenoff.AnalyserActivity;
@@ -18,6 +20,7 @@ public class MainActivity extends AnalyserActivity      //Inherit AnalyseActivit
         implements ScreenListner {                      //Implement the listener to get the callbacks
 
     private static final int RC_HANDLE_CAMERA_PERM = 123;
+    private static final int NOTIFICATION_ID = 109;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,13 +29,21 @@ public class MainActivity extends AnalyserActivity      //Inherit AnalyseActivit
     }
 
     @Override
-    public void onUserAttentionGone() {
+    public void onScreenMonitoringStart() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_eye)
+                .setContentTitle("Prevent Screen Off")
+                .setAutoCancel(false)
+                .setContentText("We are currently monitoring the user eyes.");
 
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotifyMgr.notify(NOTIFICATION_ID, builder.build());
     }
 
     @Override
-    public void onUserAttentionAvailable() {
-
+    public void onScreenMonitoringStop() {
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotifyMgr.cancel(NOTIFICATION_ID);
     }
 
     @Override
