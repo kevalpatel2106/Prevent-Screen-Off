@@ -11,8 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.kevalpatel.sample.MainActivity">
 
-    <VideoView
-        android:text="Hello world!!!"
+    <TextView
+        android:text="Hello world!!! Hello world!!! Hello world!!! Hello world!!! Hello world!!!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/video_view"/>

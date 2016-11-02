@@ -2,100 +2,72 @@ package com.kevalpatel.sample;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.PowerManager;
-import android.provider.Settings;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.MediaController;
-import android.widget.VideoView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
 import com.kevalpatel.preventscreenoff.AnalyserActivity;
-import com.kevalpatel.preventscreenoff.CameraSourcePreview;
-import com.kevalpatel.preventscreenoff.FaceTrackerListener;
+import com.kevalpatel.preventscreenoff.Errors;
+import com.kevalpatel.preventscreenoff.ScreenListner;
 
-import java.io.IOException;
-import java.util.Timer;
+public class MainActivity extends AnalyserActivity      //Inherit AnalyseActivity to automatically manage activity callback.
+        implements ScreenListner {                      //Implement the listener to get the callbacks
 
-public class MainActivity extends AnalyserActivity implements FaceTrackerListener {
     private static final int RC_HANDLE_CAMERA_PERM = 123;
-    private VideoView videoView;
-    private MediaController mc;
-    private int stopPosition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        videoView = (VideoView) findViewById(R.id.video_view);
-
-        mc = new MediaController(this);
-        mc.setAnchorView(videoView);
-        mc.setMediaPlayer(videoView);
-        videoView.setMediaController(mc);
-        videoView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/VfE_html5.mp4"));
-        videoView.start();
     }
 
     @Override
     public void onUserAttentionGone() {
-        stopPosition = videoView.getCurrentPosition(); //stopPosition is an int
-        videoView.pause();
+
     }
 
     @Override
     public void onUserAttentionAvailable() {
-        if (!videoView.isPlaying()) {
-            videoView.seekTo(stopPosition);
-            videoView.start();
+
+    }
+
+    @Override
+    public void onErrorOccurred(int errorCode) {
+        switch (errorCode) {
+            case Errors.UNDEFINED:
+                Snackbar.make(findViewById(R.id.activity_main), "Error occurred.",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case Errors.CAMERA_PERMISSION_NOT_AVAILABLE:
+                requestCameraPermission();
+                break;
+            case Errors.FRONT_CAMERA_NOT_AVAILABLE:
+                Snackbar.make(findViewById(R.id.activity_main), "Front camera is not available.",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case Errors.LOW_LIGHT:
+                Snackbar.make(findViewById(R.id.activity_main), "Not enough light is available.",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
+            case Errors.PLAY_SERVICE_NOT_AVAILABLE:
+                Snackbar.make(findViewById(R.id.activity_main), "Play services is not installed.",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+                break;
         }
-    }
-
-    @Override
-    public void onScreenOffPrevented() {
-        Log.d("screen detection", "prevented");
-    }
-
-    @Override
-    public void onCameraPermissionNotAvailable() {
-        requestCameraPermission();
-    }
-
-    @Override
-    public void onErrorOccurred() {
-        Snackbar.make(findViewById(R.id.activity_main), "Error occurred.",
-                Snackbar.LENGTH_INDEFINITE)
-                .show();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        startFaceAnalysis();
+        startEyeTracking();
     }
 
     /**
@@ -136,7 +108,7 @@ public class MainActivity extends AnalyserActivity implements FaceTrackerListene
         }
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            startFaceAnalysis();
+            startEyeTracking();
             return;
         }
 

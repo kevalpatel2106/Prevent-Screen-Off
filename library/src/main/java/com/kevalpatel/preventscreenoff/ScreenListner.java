@@ -6,15 +6,11 @@ package com.kevalpatel.preventscreenoff;
  * @author {@link 'https://github.com/kevalpatel2106'}
  */
 
-public interface FaceTrackerListener {
+public interface ScreenListner {
 
     void onUserAttentionGone();
 
     void onUserAttentionAvailable();
 
-    void onScreenOffPrevented();
-
-    void onCameraPermissionNotAvailable();
-
-    void onErrorOccurred();
+    void onErrorOccurred(int errorCode);
 }

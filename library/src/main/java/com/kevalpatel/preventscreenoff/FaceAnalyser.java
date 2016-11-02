@@ -5,8 +5,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
@@ -37,13 +37,14 @@ class FaceAnalyser {
 
     private boolean isTrackingRunning = false;
 
-    private FaceTrackerListener mScreenListener;
+    private ScreenListner mScreenListener;
     private Activity mActivity;
 
     /**
      * Public constructor.
      *
      * @param activity activity.
+     * @param preview  {@link CameraSourcePreview} to diplay the fake camera preview.
      */
     FaceAnalyser(AnalyserActivity activity, CameraSourcePreview preview) {
         if (activity != null) {
@@ -63,22 +64,30 @@ class FaceAnalyser {
         mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "FaceTacker Wakelock");
     }
 
-    void onResumeCalled() {
-        long screenOnTiming = android.provider.Settings.System.getLong(mActivity.getContentResolver(),
-                Settings.System.SCREEN_OFF_TIMEOUT, 0);
-    }
-
-    void stopFaceTracker() {
+    /**
+     * Stop the eye tracking and release the front camera.
+     */
+    void stopEyeTracker() {
         isTrackingRunning = false;
 
         if (mDetector != null) mDetector.release();
         if (mPreview != null) mPreview.release();
     }
 
-
+    /**
+     * Create the {@link FaceDetector} and initialize the {@link CameraSourcePreview}. To start eye tracking you
+     * should call {@link #startEyeTracker()} directly. This will call this method internally.
+     */
     private void creteCameraTracker() {
+        //check for the camera permission
         if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            mScreenListener.onCameraPermissionNotAvailable();
+            mScreenListener.onErrorOccurred(Errors.CAMERA_PERMISSION_NOT_AVAILABLE);
+            return;
+        }
+
+        //check if the front camera is available?
+        if (!isFrontCameraAvailable()) {
+            mScreenListener.onErrorOccurred(Errors.FRONT_CAMERA_NOT_AVAILABLE);
             return;
         }
 
@@ -86,12 +95,14 @@ class FaceAnalyser {
                 .setTrackingEnabled(false)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
+        mDetector.setProcessor(new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
+                .build());
 
-        mDetector.setProcessor(
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
-                        .build());
-
-        if (!mDetector.isOperational()) mScreenListener.onErrorOccurred();
+        //The decoder is not operational
+        if (!mDetector.isOperational()) {
+            mScreenListener.onErrorOccurred(Errors.UNDEFINED);
+            return;
+        }
 
         mCameraSource = new CameraSource.Builder(mActivity, mDetector)
                 .setRequestedPreviewSize(640, 480)
@@ -100,16 +111,21 @@ class FaceAnalyser {
                 .build();
     }
 
-
-    void startFaceTracker() {
+    /**
+     * Initialize and start the eye tracking.
+     */
+    void startEyeTracker() {
+        //initialize the camera resource
         creteCameraTracker();
 
         // check that the device has play services available.
-        int statusCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                mActivity.getApplicationContext());
+        int statusCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mActivity.getApplicationContext());
         if (statusCode != ConnectionResult.SUCCESS) {
             Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(mActivity, statusCode, RC_HANDLE_GMS);
             dlg.show();
+
+            mScreenListener.onErrorOccurred(Errors.PLAY_SERVICE_NOT_AVAILABLE);
+            return;
         }
 
         if (mCameraSource != null) {
@@ -119,12 +135,19 @@ class FaceAnalyser {
                 Log.e(TAG, "Unable to start camera source.", e);
                 mCameraSource.release();
                 mCameraSource = null;
+
+                mScreenListener.onErrorOccurred(Errors.UNDEFINED);
             }
         }
 
         isTrackingRunning = true;
     }
 
+    /**
+     * If eye detection is running or not?
+     *
+     * @return true if the camera is currently tracking the eye.
+     */
     boolean isTrackingRunning() {
         return isTrackingRunning;
     }
@@ -199,5 +222,15 @@ class FaceAnalyser {
             if (mWakeLock.isHeld()) mWakeLock.release();
             mScreenListener.onUserAttentionGone();
         }
+    }
+
+    /**
+     * Check if the device has front camera or not?
+     *
+     * @return true if the device has front camera.
+     */
+    private boolean isFrontCameraAvailable() {
+        int numCameras = Camera.getNumberOfCameras();
+        return numCameras > 0 && mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
     }
 }

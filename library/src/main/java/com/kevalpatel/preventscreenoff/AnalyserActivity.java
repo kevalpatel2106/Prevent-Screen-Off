@@ -13,44 +13,58 @@ import android.widget.RelativeLayout;
  * @author {@link 'https://github.com/kevalpatel2106'}
  */
 
-public abstract class AnalyserActivity extends AppCompatActivity implements FaceTrackerListener {
+public abstract class AnalyserActivity extends AppCompatActivity implements ScreenListner {
     private FaceAnalyser mFaceAnalyser;
-
     private boolean isForcedStop = false;
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        //initialize the face analysis
         mFaceAnalyser = new FaceAnalyser(this, addPreView());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mFaceAnalyser.onResumeCalled();
 
-        if (!isForcedStop && !mFaceAnalyser.isTrackingRunning()) startFaceAnalysis();
+        //start face tracking when application is foreground
+        if (!isForcedStop && !mFaceAnalyser.isTrackingRunning()) startEyeTracking();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        if (mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.stopFaceTracker();
+        //stop face tracking when application goes to background
+        if (mFaceAnalyser.isTrackingRunning()) stopEyeTrackingInternal();
     }
 
-
-    public final void startFaceAnalysis() {
+    /**
+     * Start the eye tracking and front camera.
+     */
+    public final void startEyeTracking() {
         if (mFaceAnalyser == null)
-            throw new RuntimeException("Cannot start face analysis in onCreate(). Start it in onStart().");
+            throw new RuntimeException("Cannot start eye analysis in onCreate(). Start it in onStart().");
 
-        mFaceAnalyser.startFaceTracker();
+        isForcedStop = false;
+        if (!mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.startEyeTracker();
     }
 
-
-    public final void stopFaceAnalyser() {
+    /**
+     * Stop face analysis and release front camera.
+     */
+    public final void stopEyeTracking() {
         isForcedStop = true;
-        mFaceAnalyser.stopFaceTracker();
+        stopEyeTrackingInternal();
+    }
+
+    /**
+     * Stop face analysis and release front camera.
+     */
+    private void stopEyeTrackingInternal() {
+        if (mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.stopEyeTracker();
     }
 
     /**
