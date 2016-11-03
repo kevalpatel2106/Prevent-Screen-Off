@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
  * @author {@link 'https://github.com/kevalpatel2106'}
  */
 
-public abstract class AnalyserActivity extends AppCompatActivity implements ScreenListner {
+public abstract class AnalyserActivity extends AppCompatActivity implements ScreenListener {
     private FaceAnalyser mFaceAnalyser;
     private boolean isForcedStop = false;
 
@@ -23,6 +23,8 @@ public abstract class AnalyserActivity extends AppCompatActivity implements Scre
 
         //initialize the face analysis
         mFaceAnalyser = new FaceAnalyser(this, addPreView());
+
+        startEyeTracking();
     }
 
     @Override

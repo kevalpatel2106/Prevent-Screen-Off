@@ -14,10 +14,10 @@ import android.view.View;
 
 import com.kevalpatel.preventscreenoff.AnalyserActivity;
 import com.kevalpatel.preventscreenoff.Errors;
-import com.kevalpatel.preventscreenoff.ScreenListner;
+import com.kevalpatel.preventscreenoff.ScreenListener;
 
 public class MainActivity extends AnalyserActivity      //Inherit AnalyseActivity to automatically manage activity callback.
-        implements ScreenListner {                      //Implement the listener to get the callbacks
+        implements ScreenListener {                      //Implement the listener to get the callbacks
 
     private static final int RC_HANDLE_CAMERA_PERM = 123;
     private static final int NOTIFICATION_ID = 109;
@@ -50,35 +50,39 @@ public class MainActivity extends AnalyserActivity      //Inherit AnalyseActivit
     public void onErrorOccurred(int errorCode) {
         switch (errorCode) {
             case Errors.UNDEFINED:
+                //Error is not defined.
+                //Library won't control the screen on/off anymore.
                 Snackbar.make(findViewById(R.id.activity_main), "Error occurred.",
                         Snackbar.LENGTH_SHORT)
                         .show();
                 break;
             case Errors.CAMERA_PERMISSION_NOT_AVAILABLE:
+                //Camera permission is not available ask for the runtime camera permission
                 requestCameraPermission();
                 break;
             case Errors.FRONT_CAMERA_NOT_AVAILABLE:
+                //Device does not have the front camera.
+                //So, this library won't control the screen on/off.
                 Snackbar.make(findViewById(R.id.activity_main), "Front camera is not available.",
                         Snackbar.LENGTH_SHORT)
                         .show();
                 break;
             case Errors.LOW_LIGHT:
+                //Low light in the surrounding environment so that eye tracking cannot work.
+                //Library won't control the screen on/off anymore.
                 Snackbar.make(findViewById(R.id.activity_main), "Not enough light is available.",
                         Snackbar.LENGTH_SHORT)
                         .show();
                 break;
             case Errors.PLAY_SERVICE_NOT_AVAILABLE:
+                //This device doesn't have the play services installed.
+                // The SDK will display the error dialog it self. This will stop the eye tracker and will not
+                // prevent screen off automatically.
                 Snackbar.make(findViewById(R.id.activity_main), "Play services is not installed.",
                         Snackbar.LENGTH_SHORT)
                         .show();
                 break;
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        startEyeTracking();
     }
 
     /**

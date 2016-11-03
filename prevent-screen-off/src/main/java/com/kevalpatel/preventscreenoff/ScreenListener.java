@@ -6,7 +6,7 @@ package com.kevalpatel.preventscreenoff;
  * @author {@link 'https://github.com/kevalpatel2106'}
  */
 
-public interface ScreenListner {
+public interface ScreenListener {
 
     void onScreenMonitoringStart();
 

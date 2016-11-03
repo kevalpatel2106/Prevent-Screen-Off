@@ -37,7 +37,7 @@ class FaceAnalyser {
 
     private boolean isTrackingRunning = false;
 
-    private ScreenListner mScreenListener;
+    private ScreenListener mScreenListener;
     private Activity mActivity;
 
     /**
