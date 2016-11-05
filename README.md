@@ -4,6 +4,10 @@
 
 ![GitHub Main](/assets/Prevent_screen_off.gif)
 
+##Featured in:
+- [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Prevent--Screen--Off-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/4598)
+- [Medium](https://medium.com/@kevalpatel2106/keep-your-device-screen-on-smartly-7081b692c09e#.vedo7hdae)
+
 ##What is this library for?
 - Ideally, when you user is looking at the screen, your application should not turn the screen off. This is huge deal for the blogging, messaging applications because those applications displays textual content to the user. Reading those textual content takes more time to the user. While reading that content (let say anu article) if the screen turns off, because of the screen timeout that is frustrating to the user.
 - This library provides smart handling of the screen on-off. This library prevents screen from turning off if your user is looking at the screen might reading some textual content on the screen. As soon as the user stop looking at the screen it will allow phone screen to turn off.
