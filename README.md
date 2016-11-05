@@ -2,8 +2,6 @@
 
 [ ![Download](https://api.bintray.com/packages/kevalpatel2106/maven/Prevent-Screen-Off/images/download.svg) ](https://bintray.com/kevalpatel2106/maven/Prevent-Screen-Off/_latestVersion) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/kevalpatel2106/UserAwareVideoView) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
 
-![Main image](/assets/Prevent_screen_off.gif)
-
 ##What is this library for?
 - Ideally, when you user is looking at the screen, your application should not turn the screen off. This is huge deal for the blogging, messaging applications because those applications displays textual content to the user. Reading those textual content takes more time to the user. While reading that content (let say anu article) if the screen turns off, because of the screen timeout that is frustrating to the user.
 - This library provides smart handling of the screen on-off. This library prevents screen from turning off if your user is looking at the screen might reading some textual content on the screen. As soon as the user stop looking at the screen it will allow phone screen to turn off.
