@@ -5,13 +5,15 @@ jdk: oraclejdk8
 notifications:
   email:
     - kevalpatel2106@gmail.com
-
+    
 env:
   matrix:
-    - ANDROID_TARGET=android-25 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
     
 android:
   components:
+    - tools # to get the new `repository-11.xml`
+    - tools # to install Android SDK tools 25.1.x (x = 6 right now)
     - platform-tools
     - build-tools-25.0.0
     - android-25
@@ -22,7 +24,6 @@ android:
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
-    - addon-google_apis-google-19
 
     #system images
     - sys-img-armeabi-v7a-android-22
@@ -41,7 +42,7 @@ android:
         - $HOME/.gradle/wrapper/
   
   before_script:
-    - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
     - emulator -avd test -no-audio -no-window &
     - android-wait-for-emulator
     - adb shell input keyevent 82 &
