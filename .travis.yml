@@ -22,7 +22,6 @@ android:
 
     #system images
     - sys-img-armeabi-v7a-android-22
-    - sys-img-x86-android-17
   
   licenses:
     - 'android-sdk-preview-license-52d11cd2'
