@@ -19,6 +19,9 @@ import static android.content.Context.SENSOR_SERVICE;
  */
 
 class LightIntensityManager {
+    //Minimum light intensity required to operate the eye detection.
+    private static final float LIGHT_INTENSITY_THRESHOLD = 6F;
+
     private final AnalyserActivity mAnalyserActivity;
 
     private final SensorManager mSensorManager;
@@ -33,8 +36,8 @@ class LightIntensityManager {
         public void onSensorChanged(SensorEvent event) {
             mLastIntensity = event.values[0];
 
-            if (mLastIntensity < 6f && mCountDownTimer == null){
-                mCountDownTimer =  new CountDownTimer(5000,5000) {
+            if (mLastIntensity < LIGHT_INTENSITY_THRESHOLD && mCountDownTimer == null) {
+                mCountDownTimer = new CountDownTimer(5000, 5000) {
                     @Override
                     public void onTick(long l) {
 
@@ -42,7 +45,8 @@ class LightIntensityManager {
 
                     @Override
                     public void onFinish() {
-                        if (mLastIntensity < 6d) mAnalyserActivity.onLowLightIntensity();
+                        if (mLastIntensity < LIGHT_INTENSITY_THRESHOLD)
+                            mAnalyserActivity.onLowLightIntensity();
 
                         mCountDownTimer = null;
                     }
@@ -83,6 +87,6 @@ class LightIntensityManager {
         mSensorManager.unregisterListener(listener);
 
         //stop the timer if running
-        if (mCountDownTimer != null)mCountDownTimer.cancel();
+        if (mCountDownTimer != null) mCountDownTimer.cancel();
     }
 }

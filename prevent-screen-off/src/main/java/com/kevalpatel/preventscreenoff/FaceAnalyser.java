@@ -28,23 +28,23 @@ import java.io.IOException;
 
 class FaceAnalyser {
     private static final int RC_HANDLE_GMS = 4525;
-    private static final String WAKE_LOCK_TAG = "FaceTacker Wakelock";
 
-    private FaceDetector mDetector;
+    private FaceDetector mDetector;             //Face detector for detecting user's eye
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
-    private PowerManager.WakeLock mWakeLock;
 
-    private boolean isTrackingRunning = false;
+    private WakelockManager mWakelockManager;
+
+    private boolean isTrackingRunning = false;  //Bool to set true is the eye tracking is currently running
 
     private ScreenListener mScreenListener;
-    private Activity mActivity;
+    private AnalyserActivity mActivity;
 
     /**
      * Public constructor.
      *
      * @param activity activity.
-     * @param preview  {@link CameraSourcePreview} to diplay the fake camera preview.
+     * @param preview  {@link CameraSourcePreview} to display the fake camera preview.
      */
     @SuppressWarnings("deprecation")
     FaceAnalyser(AnalyserActivity activity, CameraSourcePreview preview) {
@@ -61,8 +61,7 @@ class FaceAnalyser {
             throw new RuntimeException("Cannot start without camera source preview.");
         }
 
-        final PowerManager pm = (PowerManager) mActivity.getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, WAKE_LOCK_TAG);
+        mWakelockManager = new WakelockManager(activity);
     }
 
     /**
@@ -71,9 +70,14 @@ class FaceAnalyser {
     void stopEyeTracker() {
         isTrackingRunning = false;
 
+        //Release all the resources
         if (mDetector != null) mDetector.release();
         if (mPreview != null) mPreview.release();
 
+        //Release the wake lock to make surety.
+        mWakelockManager.releaseWakelock();
+
+        //Notify that eye tracking stopped
         mScreenListener.onScreenMonitoringStop();
     }
 
@@ -195,13 +199,11 @@ class FaceAnalyser {
             if (face.getIsLeftEyeOpenProbability() > 0.10 && face.getIsRightEyeOpenProbability() > 0.10) {
                 isEyesClosedCount = 0;
 
-                if (!mWakeLock.isHeld()) mWakeLock.acquire();
+               mWakelockManager.acquireWakelock();
             } else {
                 isEyesClosedCount++;
 
-                if (isEyesClosedCount > 2) {
-                    if (mWakeLock.isHeld()) mWakeLock.release();
-                }
+                if (isEyesClosedCount > 2) mWakelockManager.releaseWakelock();
             }
         }
 
@@ -220,7 +222,7 @@ class FaceAnalyser {
          */
         @Override
         public void onDone() {
-            if (mWakeLock.isHeld()) mWakeLock.release();
+            mWakelockManager.releaseWakelock();
             mScreenListener.onScreenMonitoringStart();
         }
     }
