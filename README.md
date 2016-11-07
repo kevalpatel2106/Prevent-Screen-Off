@@ -23,7 +23,7 @@ Add these lines to your `build.gradle` file to start integration.
 
 ```
 dependency{
-    compile 'com.kevalpatel2106:prevent-screen-off:1.0'
+    compile 'com.kevalpatel2106:prevent-screen-off:1.1'
 }
 ```
 - This library automatically adds `android.permission.CAMERA` and `android.permission.WAKE_LOCK` permission in your applications `AndroidManifest.xml` file.
