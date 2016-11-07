@@ -20,8 +20,10 @@ cache:
     - $HOME/.gradle/wrapper     #Cache the gradle
     
 android:
+    update_sdk: true
     components:
-        #- platform-tools
+        - platform-tools
+        - tools
         - build-tools-25.0.0
         - android-25
 
@@ -47,14 +49,16 @@ before_script:
 script:
     - echo "Travis branch is $TRAVIS_BRANCH"
     - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
-    - ./gradlew check -PdisablePreDex --continue --stacktrace
+#    - ./gradlew check -PdisablePreDex --continue --stacktrace
     - android-wait-for-emulator
     - adb devices   #Display list of devices
     - adb shell input keyevent 82 &
-    - ./gradlew connectedAndroidTest -PdisablePreDex --stacktrace
+    - ./gradlew connectedCheck -PdisablePreDex --stacktrace
  
 before_install:
     - pip install --user codecov    #Install codecov
 
 after_success:
     - codecov                       #Run codecov
+
+after_failure: "cat $TRAVIS_BUILD_DIR/app/build/outputs/lint-results-debug.xml"
