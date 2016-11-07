@@ -15,6 +15,8 @@ import android.widget.RelativeLayout;
 
 public abstract class AnalyserActivity extends AppCompatActivity implements ScreenListener {
     private FaceAnalyser mFaceAnalyser;
+    private LightIntensityManager mLightIntensityManager;
+
     private boolean isForcedStop = false;
 
     @Override
@@ -24,6 +26,10 @@ public abstract class AnalyserActivity extends AppCompatActivity implements Scre
         //initialize the face analysis
         mFaceAnalyser = new FaceAnalyser(this, addPreView());
 
+        //initialize light intensity manager
+        mLightIntensityManager = new LightIntensityManager(this);
+
+        //start eye tracking
         startEyeTracking();
     }
 
@@ -51,7 +57,12 @@ public abstract class AnalyserActivity extends AppCompatActivity implements Scre
             throw new RuntimeException("Cannot start eye analysis in onCreate(). Start it in onStart().");
 
         isForcedStop = false;
-        if (!mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.startEyeTracker();
+        if (!mFaceAnalyser.isTrackingRunning()) {
+            mFaceAnalyser.startEyeTracker();
+
+            //start light monitoring
+            mLightIntensityManager.startLightMonitoring();
+        }
     }
 
     /**
@@ -66,7 +77,19 @@ public abstract class AnalyserActivity extends AppCompatActivity implements Scre
      * Stop face analysis and release front camera.
      */
     private void stopEyeTrackingInternal() {
-        if (mFaceAnalyser.isTrackingRunning()) mFaceAnalyser.stopEyeTracker();
+        if (mFaceAnalyser.isTrackingRunning()) {
+            mFaceAnalyser.stopEyeTracker();
+            mLightIntensityManager.stopLightMonitoring();
+        }
+    }
+
+    /**
+     * This method will be called whenever eye analysis is stopped due to low light intensity.
+     * This will stop eye tracking and publish error with error code  {@link Errors#LOW_LIGHT}.
+     */
+    void onLowLightIntensity(){
+        stopEyeTrackingInternal();
+        this.onErrorOccurred(Errors.LOW_LIGHT);
     }
 
     /**
