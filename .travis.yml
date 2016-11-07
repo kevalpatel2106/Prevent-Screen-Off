@@ -8,7 +8,7 @@ notifications:
         
 env:
     matrix:
-        - ANDROID_TARGET=android-24 ANDROID_ABI=armeabi-v7a
+        #- ANDROID_TARGET=android-24 ANDROID_ABI=armeabi-v7a
         - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
     global:
         - ADB_INSTALL_TIMEOUT=10    #Time out to 10 mins
@@ -26,7 +26,7 @@ android:
     components:
         #- platform-tools
         - build-tools-25.0.0
-        - android-24
+        #- android-24
         - android-22
 
         # Additional components
@@ -35,7 +35,7 @@ android:
         - extra-android-m2repository
 
         #system images
-        - sys-img-armeabi-v7a-android-24
+        #- sys-img-armeabi-v7a-android-24
         - sys-img-armeabi-v7a-android-22
   
 licenses:
@@ -45,6 +45,7 @@ licenses:
     
 before_script:
     - chmod +x gradlew      #Grand permissions
+    - android list targets
     - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI
     - emulator -avd test -no-skin -no-audio -no-window &amp;    #Start emulator
 
