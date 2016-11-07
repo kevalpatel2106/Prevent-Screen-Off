@@ -1,6 +1,6 @@
 # Prevent-Screen-Off
 
-[ ![Download](https://api.bintray.com/packages/kevalpatel2106/maven/Prevent-Screen-Off/images/download.svg) ](https://bintray.com/kevalpatel2106/maven/Prevent-Screen-Off/_latestVersion) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/kevalpatel2106/UserAwareVideoView) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
+[![Build Status](https://travis-ci.org/kevalpatel2106/Prevent-Screen-Off.svg?branch=master)](https://travis-ci.org/kevalpatel2106/Prevent-Screen-Off) [ ![Download](https://api.bintray.com/packages/kevalpatel2106/maven/Prevent-Screen-Off/images/download.svg) ](https://bintray.com/kevalpatel2106/maven/Prevent-Screen-Off/_latestVersion) [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/kevalpatel2106/UserAwareVideoView) [![API](https://img.shields.io/badge/API-15%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=15)
 
 ![GitHub Main](/assets/Prevent_screen_off.gif)
 
