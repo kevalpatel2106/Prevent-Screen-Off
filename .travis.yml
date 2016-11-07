@@ -46,8 +46,8 @@ licenses:
 before_script:
     - chmod +x gradlew      #Grand permissions
     - android list targets
-    - echo no | android create avd --force --name test --target android-22 --abi armeabi-v7a
-    - emulator -avd test -no-skin -no-audio -no-window &amp;    #Start emulator
+    - echo no | android create avd --force --name test --target android-22 --abi armeabi-v7a    #Create AVD
+    - emulator -avd test -no-skin -no-audio -no-window &    #Start emulator
 
 script:
     - echo "Travis branch is $TRAVIS_BRANCH"
