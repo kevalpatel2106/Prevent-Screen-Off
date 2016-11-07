@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">EyeDetection</string>
+    <string name="app_name">Prevent Screen Off Sample</string>
     <string name="no_camera_permission">No Camera Permission.</string>
     <string name="permission_camera_rationale">Provide camera permission.</string>
+    <string name="hint_text">This is the demo of the Prevent screen off library. Don\'t interact
+        with the device. Let the screen time out run out. This library will automatically detect
+        your eye and prevent the screen from turning off.
+    </string>
 </resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -12,9 +12,9 @@
     tools:context="com.kevalpatel.sample.MainActivity">
 
     <TextView
-        android:text="Hello world!!! Hello world!!! Hello world!!! Hello world!!! Hello world!!!"
+        android:id="@+id/video_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/video_view"/>
-
-</RelativeLayout>
+        android:text="@string/hint_text"
+        android:textSize="16sp"/>
+</LinearLayout>
