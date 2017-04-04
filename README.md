@@ -5,21 +5,21 @@
 
 ![GitHub Main](/assets/Prevent_screen_off.gif)
 
-##Featured in:
+## Featured in:
 - [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Prevent--Screen--Off-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/4598)
 - [Medium](https://medium.com/@kevalpatel2106/keep-your-device-screen-on-smartly-7081b692c09e#.vedo7hdae)
 
-##What is this library for?
+## What is this library for?
 - Ideally, when you user is looking at the screen, your application should not turn the screen off. This is huge deal for the blogging, messaging applications because those applications displays textual content to the user. Reading those textual content takes more time to the user. While reading that content (let say anu article) if the screen turns off, because of the screen timeout that is frustrating to the user.
 - This library provides smart handling of the screen on-off. This library prevents screen from turning off if your user is looking at the screen might reading some textual content on the screen. As soon as the user stop looking at the screen it will allow phone screen to turn off.
 
-##How this library works?
+## How this library works?
 - This library users Google Play Services Mobile Vision API to track users eye using the front camera of the device. 
 - Library will start tracking user eyes as soon as activity comes into the foreground. If the user is looking at the screen this will prevent screen from turning off.
 - When library detects that the user is not looking at the screen, this will turn off the screen after some time and stop eye tracking the preserve the battery. 
 
-##How to use this library???
-###Gradle dependency:
+## How to use this library???
+### Gradle dependency:
 Add these lines to your `build.gradle` file to start integration. 
 
 ```
@@ -29,7 +29,7 @@ dependency{
 ```
 - This library automatically adds `android.permission.CAMERA` and `android.permission.WAKE_LOCK` permission in your applications `AndroidManifest.xml` file.
 
-###Initialize in your activity:
+### Initialize in your activity:
 - First you need to inherit `AnalyserActivity` in the activity which you want to controll screen on/off automatically. The library will synchronise with your activity lifecycle and start and stop eye tracking based on your activity state
 - Implement `ScreenListener` to receive the callbacks from the library.
 ```
@@ -75,17 +75,17 @@ public void onErrorOccurred(int errorCode) {
 }
 ```
 
-####That's it. You are ready to test.
+#### That's it. You are ready to test.
 
-##Where to use this library:
+## Where to use this library:
 - Tracking user's eye using device camera consumes more battery. So, it is advisable that you don't integrate automatic screen controll in every screen of you application.
 - You can integrate this features in your application activity, which has more textual content to read. e.g. chat conversation activity in messaging app or activity that displays full article in your blogging application._(This list can be extend for may other users. Let me know if you have more ideas.)_
 
-##Demo
+## Demo
 - You can download the sample apk from [here](/apk/sample.apk).
 
-##Contribute:
-####Simple 3 step to contribute into this repo:
+## Contribute:
+#### Simple 3 step to contribute into this repo:
 
 1. Fork the project. 
 2. Make required changes and commit. 
