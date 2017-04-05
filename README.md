@@ -91,5 +91,5 @@ public void onErrorOccurred(int errorCode) {
 3. Generate pull request. Mention all the required description regarding changes you made.
 
 ## Questions? 
-Hit me on twitter [![Twitter](https://img.shields.io/badge/Twitter-@kevalpatel2106-blue.svg?style=flat)](https://twitter.com/kevalpatel2106)
+Hit me on [![Twitter](https://img.shields.io/badge/Twitter-@kevalpatel2106-blue.svg?style=flat)](https://twitter.com/kevalpatel2106)
 
